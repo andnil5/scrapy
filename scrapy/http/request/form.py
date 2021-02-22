@@ -16,7 +16,7 @@ from scrapy.utils.python import to_bytes, is_listlike
 from scrapy.utils.response import get_base_url
 
 
-coverage_get_form = [False]*13
+coverage_get_form = [False]*24
 coverage_get_inputs = [False]*16
 coverage_get_clickable = [False]*11
 
@@ -84,40 +84,74 @@ def _get_form(response, formname, formid, formnumber, formxpath):
                             base_url=get_base_url(response))
     forms = root.xpath('//form')
     if not forms:
+        coverage_get_form[0] = True
         raise ValueError(f"No <form> element found in {response}")
+    else:
+        coverage_get_form[1] = True
 
     if formname is not None:
+        coverage_get_form[2] = True
         f = root.xpath(f'//form[@name="{formname}"]')
         if f:
+            coverage_get_form[3] = True
             return f[0]
+        else:
+            coverage_get_form[4] = True
+    else:
+        coverage_get_form[5] = True
 
     if formid is not None:
+        coverage_get_form[6] = True
         f = root.xpath(f'//form[@id="{formid}"]')
         if f:
+            coverage_get_form[7] = True
             return f[0]
+        else:
+            coverage_get_form[8] = True
+    else:
+        coverage_get_form[9] = True
 
     # Get form element from xpath, if not found, go up
     if formxpath is not None:
+        coverage_get_form[10] = True
         nodes = root.xpath(formxpath)
         if nodes:
+            coverage_get_form[11] = True
             el = nodes[0]
             while True:
+                coverage_get_form[12] = True
                 if el.tag == 'form':
+                    coverage_get_form[13] = True
                     return el
+                else:
+                    coverage_get_form[14] = True
                 el = el.getparent()
                 if el is None:
+                    coverage_get_form[15] = True
                     break
+                else:
+                    coverage_get_form[16] = True
+            coverage_get_form[17] = True  # after while
+        else:
+            coverage_get_form[18] = True
         raise ValueError(f'No <form> element found with {formxpath}')
+    else:
+        coverage_get_form[19] = True
 
     # If we get here, it means that either formname was None
     # or invalid
     if formnumber is not None:
+        coverage_get_form[20] = True
         try:
             form = forms[formnumber]
         except IndexError:
+            coverage_get_form[21] = True  # if raised
             raise IndexError(f"Form number {formnumber} not found in {response}")
         else:
+            coverage_get_form[22] = True  # if not raised
             return form
+    else:
+        coverage_get_form[23] = True
 
 
 def _get_inputs(form, formdata, dont_click, clickdata, response):
