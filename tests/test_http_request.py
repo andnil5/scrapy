@@ -5,8 +5,10 @@ import xmlrpc.client
 import warnings
 from unittest import mock
 from urllib.parse import parse_qs, unquote_to_bytes, urlparse
+import os
 
 from scrapy.http import Request, FormRequest, XmlRpcRequest, JsonRequest, Headers, HtmlResponse
+from scrapy.http.request.form import coverage_get_clickable, coverage_get_form, coverage_get_inputs
 from scrapy.utils.python import to_bytes, to_unicode
 
 
@@ -1429,6 +1431,21 @@ class JsonRequestTest(RequestTest):
     def tearDown(self):
         warnings.resetwarnings()
         super().tearDown()
+
+
+def log_to_file(data, file):
+    """Logs branch coverage result to the given file."""
+    with open(file, 'w+') as f:
+        res = "Coverage: {:.2f}%\n".format(sum(data)/len(data)*100)
+        res += "{}\n".format(str(data))
+        f.write(res)
+
+
+def tearDownModule():
+    log_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', 'branch_cov_logs')
+    log_to_file(coverage_get_clickable, os.path.join(log_dir, 'get_clickable.txt'))
+    log_to_file(coverage_get_form, os.path.join(log_dir, 'get_form.txt'))
+    log_to_file(coverage_get_inputs, os.path.join(log_dir, 'get_inputs.txt'))
 
 
 if __name__ == "__main__":
