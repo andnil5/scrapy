@@ -16,6 +16,10 @@ from scrapy.utils.python import to_bytes, is_listlike
 from scrapy.utils.response import get_base_url
 
 
+coverage_get_form = [False]*13
+coverage_get_inputs = [False]*16
+coverage_get_clickable = [False]*11
+
 class FormRequest(Request):
     valid_form_methods = ['GET', 'POST']
 
@@ -183,10 +187,12 @@ def _get_clickable(clickdata, form):
         namespaces={"re": "http://exslt.org/regular-expressions"}
     ))
     if not clickables:
+        coverage_get_clickable[0] = True
         return
 
     # If we don't have clickdata, we just use the first clickable element
     if clickdata is None:
+        coverage_get_clickable[1] = True
         el = clickables[0]
         return (el.get('name'), el.get('value') or '')
 
@@ -195,6 +201,7 @@ def _get_clickable(clickdata, form):
     # because that uniquely identifies the element
     nr = clickdata.get('nr', None)
     if nr is not None:
+        coverage_get_clickable[2] = True
         try:
             el = list(form.inputs)[nr]
         except IndexError:

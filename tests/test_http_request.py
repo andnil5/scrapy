@@ -5,8 +5,10 @@ import xmlrpc.client
 import warnings
 from unittest import mock
 from urllib.parse import parse_qs, unquote_to_bytes, urlparse
+import os
 
 from scrapy.http import Request, FormRequest, XmlRpcRequest, JsonRequest, Headers, HtmlResponse
+from scrapy.http.request.form import coverage_get_clickable, coverage_get_form, coverage_get_inputs
 from scrapy.utils.python import to_bytes, to_unicode
 
 
@@ -1429,6 +1431,15 @@ class JsonRequestTest(RequestTest):
     def tearDown(self):
         warnings.resetwarnings()
         super().tearDown()
+
+
+def tearDownModule():
+    # raise ValueError(os.path.dirname(os.path.realpath(__file__)))
+    with open('./get_form.txt', 'w+') as f:
+        res = "Coverage: {:.2f}%\n".format(sum(coverage_get_form)/len(coverage_get_form)*100)
+        res+= "{}\n".format(str(coverage_get_form))
+        print(res)
+        f.write(res)
 
 
 if __name__ == "__main__":
