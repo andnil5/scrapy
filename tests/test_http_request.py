@@ -1433,9 +1433,13 @@ class JsonRequestTest(RequestTest):
         super().tearDown()
 
 
+
+def get_testdata(*paths):
+    """Return test data"""
 def tearDownModule():
-    # raise ValueError(os.path.dirname(os.path.realpath(__file__)))
-    with open('./get_form.txt', 'w+') as f:
+    tests_datadir = os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', 'branch_cov_logs')
+    path = os.path.join(tests_datadir, 'get_form.txt')
+    with open(path, 'w+') as f:
         res = "Coverage: {:.2f}%\n".format(sum(coverage_get_form)/len(coverage_get_form)*100)
         res+= "{}\n".format(str(coverage_get_form))
         print(res)
