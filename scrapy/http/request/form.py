@@ -18,7 +18,7 @@ from scrapy.utils.response import get_base_url
 
 coverage_get_form = [False]*24
 coverage_get_inputs = [False]*16
-coverage_get_clickable = [False]*11
+coverage_get_clickable = [False]*12
 
 class FormRequest(Request):
     valid_form_methods = ['GET', 'POST']
@@ -223,34 +223,47 @@ def _get_clickable(clickdata, form):
     if not clickables:
         coverage_get_clickable[0] = True
         return
+    else:
+        coverage_get_clickable[1] = True
 
     # If we don't have clickdata, we just use the first clickable element
     if clickdata is None:
-        coverage_get_clickable[1] = True
+        coverage_get_clickable[2] = True
         el = clickables[0]
         return (el.get('name'), el.get('value') or '')
+    else:
+        coverage_get_clickable[3] = True
 
     # If clickdata is given, we compare it to the clickable elements to find a
     # match. We first look to see if the number is specified in clickdata,
     # because that uniquely identifies the element
     nr = clickdata.get('nr', None)
     if nr is not None:
-        coverage_get_clickable[2] = True
+        coverage_get_clickable[4] = True
         try:
             el = list(form.inputs)[nr]
         except IndexError:
+            coverage_get_clickable[5] = True  # if raised
             pass
         else:
+            coverage_get_clickable[6] = True  # if notraised
             return (el.get('name'), el.get('value') or '')
+    else:
+        coverage_get_clickable[7] = True
 
     # We didn't find it, so now we build an XPath expression out of the other
     # arguments, because they can be used as such
     xpath = './/*' + ''.join(f'[@{k}="{v}"]' for k, v in clickdata.items())
     el = form.xpath(xpath)
     if len(el) == 1:
+        coverage_get_clickable[8] = True
         return (el[0].get('name'), el[0].get('value') or '')
     elif len(el) > 1:
+        coverage_get_clickable[9] = True  # "false branch" of if
+        coverage_get_clickable[10] = True  # "true branch" of elif
         raise ValueError(f"Multiple elements found ({el!r}) matching the "
                          f"criteria in clickdata: {clickdata!r}")
     else:
+        coverage_get_clickable[9] = True  # "false branch" of if
+        coverage_get_clickable[11] = True  # "false branch" of elif
         raise ValueError(f'No clickable element matching clickdata: {clickdata!r}')
