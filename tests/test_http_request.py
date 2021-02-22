@@ -1433,17 +1433,20 @@ class JsonRequestTest(RequestTest):
         super().tearDown()
 
 
+def log_to_file(data, file):
+    """Logs branch coverage result to the given file."""
+    with open(file, 'w+') as f:
+        res = "Coverage: {:.2f}%\n".format(sum(data)/len(data)*100)
+        res+= "{}\n".format(str(data))
+        f.write(res)
 
 def get_testdata(*paths):
     """Return test data"""
 def tearDownModule():
-    tests_datadir = os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', 'branch_cov_logs')
-    path = os.path.join(tests_datadir, 'get_form.txt')
-    with open(path, 'w+') as f:
-        res = "Coverage: {:.2f}%\n".format(sum(coverage_get_form)/len(coverage_get_form)*100)
-        res+= "{}\n".format(str(coverage_get_form))
-        print(res)
-        f.write(res)
+    log_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', 'branch_cov_logs')
+    log_to_file(coverage_get_clickable, os.path.join(log_dir, 'get_clickable.txt'))
+    log_to_file(coverage_get_form, os.path.join(log_dir, 'get_form.txt'))
+    log_to_file(coverage_get_inputs, os.path.join(log_dir, 'get_inputs.txt'))
 
 
 if __name__ == "__main__":
