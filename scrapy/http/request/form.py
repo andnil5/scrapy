@@ -158,13 +158,10 @@ def _get_inputs(form, formdata, dont_click, clickdata, response):
     try:
         coverage_get_inputs[0] = True
         # Only for branch coverage
-        try: 
-            dict(formdata)
-        except:
+        if formdata: 
             coverage_get_inputs[1] = True
         else:
             coverage_get_inputs[2] = True
-
         formdata_keys = dict(formdata or ()).keys()
     except (ValueError, TypeError):
         coverage_get_inputs[3] = True
@@ -287,9 +284,9 @@ def _get_clickable(clickdata, form):
         el = clickables[0]
 
         # Only for branch coverage
-        if el.get('value') is not None:
+        if el.get('value'):
             coverage_get_clickable[3] = True
-        else: 
+        else:
             coverage_get_clickable[4] = True
         
         return (el.get('name'), el.get('value') or '')
@@ -309,12 +306,11 @@ def _get_clickable(clickdata, form):
             pass
         else:
             coverage_get_clickable[8] = True  # if notraised
-            # if not el.get('value'):
 
             # Only for branch coverage
-            if el.get('value') is not None:
+            if el.get('value'):
                 coverage_get_clickable[9] = True
-            else: 
+            else:
                 coverage_get_clickable[10] = True
 
             return (el.get('name'), el.get('value') or '')
@@ -335,9 +331,9 @@ def _get_clickable(clickdata, form):
         coverage_get_clickable[13] = True
 
         # Only for branch coverage
-        if el[0].get('value') is not None:
+        if el[0].get('value'):
             coverage_get_clickable[14] = True
-        else: 
+        else:
             coverage_get_clickable[15] = True
 
         return (el[0].get('name'), el[0].get('value') or '')
