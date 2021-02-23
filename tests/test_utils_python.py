@@ -6,11 +6,13 @@ import unittest
 from datetime import datetime
 from itertools import count
 from warnings import catch_warnings
+from utils import log_to_file
+
 
 from scrapy.utils.python import (
     memoizemethod_noargs, binary_is_text, equal_attributes,
     WeakKeyCache, get_func_args, to_bytes, to_unicode,
-    without_none_values, MutableChain)
+    without_none_values, MutableChain, coverage_get_func_args)
 
 
 __doctests__ = ['scrapy.utils.python']
@@ -232,6 +234,10 @@ class UtilsPythonTestCase(unittest.TestCase):
         self.assertEqual(
             without_none_values({'one': 1, 'none': None, 'three': 3, 'four': 4}),
             {'one': 1, 'three': 3, 'four': 4})
+
+
+def tearDownModule():
+    log_to_file(coverage_get_func_args, 'coverage_get_func_args.txt')
 
 
 if __name__ == "__main__":

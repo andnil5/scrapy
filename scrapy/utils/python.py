@@ -14,6 +14,7 @@ from itertools import chain
 from scrapy.exceptions import ScrapyDeprecationWarning
 from scrapy.utils.decorators import deprecated
 
+coverage_get_func_args = [False]*10
 
 def flatten(x):
     """flatten(sequence) -> list

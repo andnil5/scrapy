@@ -2,9 +2,10 @@ import unittest
 import warnings
 
 from w3lib.http import basic_auth_header
+from utils import log_to_file
 
 from scrapy import Request
-from scrapy.utils.curl import curl_to_request_kwargs
+from scrapy.utils.curl import curl_to_request_kwargs, coverage_curl_to_request_kwargs
 
 
 class CurlToRequestKwargsTest(unittest.TestCase):
@@ -229,3 +230,7 @@ class CurlToRequestKwargsTest(unittest.TestCase):
             ValueError,
             lambda: curl_to_request_kwargs("carl -X POST http://example.org")
         )
+
+
+def tearDownModule():
+    log_to_file(coverage_curl_to_request_kwargs, 'curl_to_request_kwargs.txt')

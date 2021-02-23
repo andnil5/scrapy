@@ -6,6 +6,7 @@ from urllib.parse import urlparse
 
 from w3lib.http import basic_auth_header
 
+coverage_curl_to_request_kwargs = [False]*10
 
 class CurlParser(argparse.ArgumentParser):
     def error(self, message):
