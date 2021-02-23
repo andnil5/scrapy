@@ -14,7 +14,7 @@ from itertools import chain
 from scrapy.exceptions import ScrapyDeprecationWarning
 from scrapy.utils.decorators import deprecated
 
-coverage_get_func_args = [False]*10
+coverage_get_func_args = [False]*17
 
 def flatten(x):
     """flatten(sequence) -> list
@@ -199,28 +199,54 @@ def _getargspec_py23(func):
 def get_func_args(func, stripself=False):
     """Return the argument name list of a callable"""
     if inspect.isfunction(func):
+        coverage_get_func_args[0] = True
         spec = inspect.getfullargspec(func)
         func_args = spec.args + spec.kwonlyargs
     elif inspect.isclass(func):
+        coverage_get_func_args[1] = True
         return get_func_args(func.__init__, True)
     elif inspect.ismethod(func):
+        coverage_get_func_args[2] = True
         return get_func_args(func.__func__, True)
     elif inspect.ismethoddescriptor(func):
+        coverage_get_func_args[3] = True
         return []
     elif isinstance(func, partial):
+        coverage_get_func_args[4] = True
+
+        # Only for branch coverage
+        for x in get_func_args(func.func)[len(func.args):]:
+            coverage_get_func_args[5] = True
+            if not func.keywords:
+                coverage_get_func_args[6] = True
+            else:
+                coverage_get_func_args[7] = True
+                if not x in func.keywords:
+                    coverage_get_func_args[8] = True
+                else:
+                    coverage_get_func_args[9] = True
+
         return [x for x in get_func_args(func.func)[len(func.args):]
                 if not (func.keywords and x in func.keywords)]
     elif hasattr(func, '__call__'):
+        coverage_get_func_args[10] = True
         if inspect.isroutine(func):
+            coverage_get_func_args[11] = True
             return []
         elif getattr(func, '__name__', None) == '__call__':
+            coverage_get_func_args[12] = True
             return []
         else:
+            coverage_get_func_args[13] = True
             return get_func_args(func.__call__, True)
     else:
+        coverage_get_func_args[14] = True
         raise TypeError(f'{type(func)} is not callable')
     if stripself:
+        coverage_get_func_args[15] = True
         func_args.pop(0)
+    else:
+        coverage_get_func_args[16] = True
     return func_args
 
 
