@@ -17,7 +17,7 @@ from scrapy.utils.response import get_base_url
 
 
 coverage_get_form = [False]*24
-coverage_get_inputs = [False]*16
+coverage_get_inputs = [False]*26
 coverage_get_clickable = [False]*12
 
 class FormRequest(Request):
@@ -156,12 +156,25 @@ def _get_form(response, formname, formid, formnumber, formxpath):
 
 def _get_inputs(form, formdata, dont_click, clickdata, response):
     try:
+        coverage_get_inputs[0] = True
+        # Only for branch coverage
+        try: 
+            dict(formdata)
+        except:
+            coverage_get_inputs[1] = True
+        else:
+            coverage_get_inputs[2] = True
+
         formdata_keys = dict(formdata or ()).keys()
     except (ValueError, TypeError):
+        coverage_get_inputs[3] = True
         raise ValueError('formdata should be a dict or iterable of tuples')
 
     if not formdata:
+        coverage_get_inputs[4] = True
         formdata = ()
+    else:
+        coverage_get_inputs[5] = True
     inputs = form.xpath('descendant::textarea'
                         '|descendant::select'
                         '|descendant::input[not(@type) or @type['
@@ -170,17 +183,59 @@ def _get_inputs(form, formdata, dont_click, clickdata, response):
                         '  not(re:test(., "^(?:checkbox|radio)$", "i")))]]',
                         namespaces={
                             "re": "http://exslt.org/regular-expressions"})
+    
+    # Only for branch coverage
+    for k, v in (_value(e) for e in inputs):
+        coverage_get_inputs[6] = True
+        if k:
+            coverage_get_inputs[7] = True
+            if k not in formdata_keys:
+                coverage_get_inputs[8] = True
+                if v is None:
+                    coverage_get_inputs[9] = True
+                else:
+                    coverage_get_inputs[10] = True
+            else:
+                coverage_get_inputs[11] = True
+        else:
+            coverage_get_inputs[12] = True
+
     values = [(k, '' if v is None else v)
-              for k, v in (_value(e) for e in inputs)
-              if k and k not in formdata_keys]
+            for k, v in (_value(e) for e in inputs)
+            if k and k not in formdata_keys]    
 
     if not dont_click:
+        coverage_get_inputs[13] = True
         clickable = _get_clickable(clickdata, form)
-        if clickable and clickable[0] not in formdata and not clickable[0] is None:
-            values.append(clickable)
+        if clickable:
+            coverage_get_inputs[14] = True
+            if clickable[0] not in formdata: 
+                coverage_get_inputs[15] = True
+                if not clickable[0] is None:
+                    coverage_get_inputs[16] = True
+                    values.append(clickable)
+                else:
+                    coverage_get_inputs[17] = True
+            else:
+                coverage_get_inputs[18] = True
+        else:
+            coverage_get_inputs[19] = True
+    else:
+        coverage_get_inputs[20] = True
 
     if isinstance(formdata, dict):
+        coverage_get_inputs[21] = True
         formdata = formdata.items()
+    else:
+        coverage_get_inputs[22] = True
+
+    # Only for branch coverage
+    for k, v in formdata:
+        coverage_get_inputs[23] = True
+        if v is not None:
+            coverage_get_inputs[24] = True
+        else:
+            coverage_get_inputs[25] = True
 
     values.extend((k, v) for k, v in formdata if v is not None)
     return values
