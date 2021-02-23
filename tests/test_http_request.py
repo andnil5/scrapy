@@ -1281,6 +1281,16 @@ class JsonRequestTest(RequestTest):
         b'Accept': [b'application/json, text/javascript, */*; q=0.01'],
     }
 
+    def test_replace_custom(self):
+        """Test Request.replace() method"""
+        data = {
+            'name': 'value',
+        }
+        r1 = self.request_class(url="http://www.example.com/", data=data)
+        with warnings.catch_warnings(record=True) as _warnings:
+            r2 = r1.replace(method="POST", body=b"New body", data=data)
+            self.assertEqual(len(_warnings), 1)
+
     def setUp(self):
         warnings.simplefilter("always")
         super().setUp()
