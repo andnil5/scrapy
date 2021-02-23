@@ -19,6 +19,7 @@ from scrapy.spiders import (
     Spider,
     XMLFeedSpider,
 )
+from scrapy.spiders.sitemap import regex  # GROUP 12 ADDED IMPORT
 from scrapy.linkextractors import LinkExtractor
 from scrapy.utils.test import get_crawler
 
@@ -576,6 +577,15 @@ Sitemap: /sitemap-relative-url.xml
         spider = FilteredSitemapSpider("example.com")
         self.assertEqual([req.url for req in spider._parse_sitemap(r)],
                          ['http://www.example.com/sitemap2.xml'])
+
+
+class SitemapSpiderHelperTest(unittest.TestCase):
+
+    def test_regex(self):
+        # GROUP 12 ADDED TEST CASE
+        import re
+        re_obj = re.compile('hello')
+        assert re_obj is regex(re_obj)
 
 
 class DeprecationTest(unittest.TestCase):
