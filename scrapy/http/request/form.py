@@ -18,7 +18,7 @@ from scrapy.utils.response import get_base_url
 
 coverage_get_form = [False]*24
 coverage_get_inputs = [False]*26
-coverage_get_clickable = [False]*12
+coverage_get_clickable = [False]*19
 
 class FormRequest(Request):
     valid_form_methods = ['GET', 'POST']
@@ -285,40 +285,68 @@ def _get_clickable(clickdata, form):
     if clickdata is None:
         coverage_get_clickable[2] = True
         el = clickables[0]
+
+        # Only for branch coverage
+        if el.get('value') is not None:
+            coverage_get_clickable[3] = True
+        else: 
+            coverage_get_clickable[4] = True
+        
         return (el.get('name'), el.get('value') or '')
     else:
-        coverage_get_clickable[3] = True
+        coverage_get_clickable[5] = True
 
     # If clickdata is given, we compare it to the clickable elements to find a
     # match. We first look to see if the number is specified in clickdata,
     # because that uniquely identifies the element
     nr = clickdata.get('nr', None)
     if nr is not None:
-        coverage_get_clickable[4] = True
+        coverage_get_clickable[6] = True
         try:
             el = list(form.inputs)[nr]
         except IndexError:
-            coverage_get_clickable[5] = True  # if raised
+            coverage_get_clickable[7] = True  # if raised
             pass
         else:
-            coverage_get_clickable[6] = True  # if notraised
+            coverage_get_clickable[8] = True  # if notraised
+            # if not el.get('value'):
+
+            # Only for branch coverage
+            if el.get('value') is not None:
+                coverage_get_clickable[9] = True
+            else: 
+                coverage_get_clickable[10] = True
+
             return (el.get('name'), el.get('value') or '')
     else:
-        coverage_get_clickable[7] = True
+        coverage_get_clickable[11] = True
+
+    # Only for branch coverage
+    for k, v in clickdata.items():
+        coverage_get_clickable[12] = True
+        break
 
     # We didn't find it, so now we build an XPath expression out of the other
     # arguments, because they can be used as such
     xpath = './/*' + ''.join(f'[@{k}="{v}"]' for k, v in clickdata.items())
+
     el = form.xpath(xpath)
     if len(el) == 1:
-        coverage_get_clickable[8] = True
+        coverage_get_clickable[13] = True
+
+        # Only for branch coverage
+        if el[0].get('value') is not None:
+            coverage_get_clickable[14] = True
+        else: 
+            coverage_get_clickable[15] = True
+
         return (el[0].get('name'), el[0].get('value') or '')
     elif len(el) > 1:
-        coverage_get_clickable[9] = True  # "false branch" of if
-        coverage_get_clickable[10] = True  # "true branch" of elif
+        coverage_get_clickable[16] = True  # "false branch" of if
+        coverage_get_clickable[17] = True  # "true branch" of elif
         raise ValueError(f"Multiple elements found ({el!r}) matching the "
                          f"criteria in clickdata: {clickdata!r}")
     else:
-        coverage_get_clickable[9] = True  # "false branch" of if
-        coverage_get_clickable[11] = True  # "false branch" of elif
+        coverage_get_clickable[16] = True  # "false branch" of if
+        coverage_get_clickable[18] = True  # "false branch" of elif
         raise ValueError(f'No clickable element matching clickdata: {clickdata!r}')
