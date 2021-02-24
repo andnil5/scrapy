@@ -1281,6 +1281,7 @@ class JsonRequestTest(RequestTest):
         b'Accept': [b'application/json, text/javascript, */*; q=0.01'],
     }
 
+    # GROUP 12 ADDED TEST CASE
     def test_replace_custom(self):
         """Test Request.replace() method"""
         data = {
