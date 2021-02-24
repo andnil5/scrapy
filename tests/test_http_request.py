@@ -34,6 +34,19 @@ class FormTest(unittest.TestCase):
         formxpath = '//form/..'
         self.assertRaises(ValueError, _get_form, response, formname, formid, formnumber, formxpath)
 
+    def test_get_form_None(self):
+        # GROUP 12 ADDED TEST CASE
+        response = _buildresponse(
+            b"""<form action="post.php" method="POST">
+            <input type="hidden" name="test" value="val1">
+            </form>""",
+            url="http://www.example.com/index.html")
+        formname = None
+        formid = None
+        formnumber = None
+        formxpath = None
+        self.assertIsNone(_get_form(response, formname, formid, formnumber, formxpath))
+
 
 class RequestTest(unittest.TestCase):
 
