@@ -19,7 +19,8 @@ from scrapy.spiders import (
     Spider,
     XMLFeedSpider,
 )
-from scrapy.spiders.sitemap import regex  # GROUP 12 ADDED IMPORT
+# GROUP 12 ADDED IMPORT
+from scrapy.spiders.sitemap import regex
 from scrapy.linkextractors import LinkExtractor
 from scrapy.utils.test import get_crawler
 
