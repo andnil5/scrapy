@@ -42,6 +42,8 @@ class ResponseUtilsTest(unittest.TestCase):
         resp = Response(url, body=body)
         self.assertRaises(TypeError, open_in_browser, resp, debug=True)
 
+
+    # GROUP 12 ADDED TEST CASE
     def test_open_in_browser_custom(self):
         url = "http:///www.example.com/some/page.html"
         body = b"dummy dummy"
