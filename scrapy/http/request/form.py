@@ -130,11 +130,28 @@ def _get_form(response, formname, formid, formnumber, formxpath):
         else:
             return form
 
-def _get_inputs(form, formdata, dont_click, clickdata, response):
+
+# Refactoring `_get_inputs` grp12
+def _validate_formdata(formdata):
     try:
         formdata_keys = dict(formdata or ()).keys()
     except (ValueError, TypeError):
         raise ValueError('formdata should be a dict or iterable of tuples')
+    else:
+        return formdata_keys
+
+
+# Refactoring `_get_inputs` grp12
+def _parse_inputs(formdata_keys, inputs):
+    return [(k, '' if v is None else v)
+            for k, v in (_value(e) for e in inputs)
+            if k and k not in formdata_keys]
+
+
+# Refactoring `_get_inputs` grp12
+def _get_inputs(form, formdata, dont_click, clickdata, response):
+
+    formdata_keys = _validate_formdata(formdata)
 
     if not formdata:
         formdata = ()
@@ -146,9 +163,8 @@ def _get_inputs(form, formdata, dont_click, clickdata, response):
                         '  not(re:test(., "^(?:checkbox|radio)$", "i")))]]',
                         namespaces={
                             "re": "http://exslt.org/regular-expressions"})
-    values = [(k, '' if v is None else v)
-              for k, v in (_value(e) for e in inputs)
-              if k and k not in formdata_keys]
+
+    values = _parse_inputs(formdata_keys, inputs)
 
     if not dont_click:
         clickable = _get_clickable(clickdata, form)
