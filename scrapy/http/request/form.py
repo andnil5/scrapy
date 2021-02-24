@@ -74,35 +74,50 @@ def _urlencode(seq, enc):
     return urlencode(values, doseq=1)
 
 
+# Refactoring `_get_form` grp12
+def _get_forms_if_exist(root, response):
+    forms = root.xpath('//form')
+    if not forms:
+        raise ValueError(f"No <form> element found in {response}")
+    else:
+        return forms
+
+
+# Refactoring `_get_form` grp12
+def _get_form_by_param(root, param, label):
+    if param is not None:
+        f = root.xpath(f'//form[@{label}="{param}"]')
+        if f:
+            return f[0]
+    return None
+
+
+# Refactoring `_get_form` grp12
+def _get_form_from_id_or_name(root, formname, formid):
+    return _get_form_by_param(root, formname, "name") or _get_form_by_param(root, formid, "id")
+
+
+# Refactoring `_get_form` grp12
 def _get_form(response, formname, formid, formnumber, formxpath):
     """Find the form element """
     root = create_root_node(response.text, lxml.html.HTMLParser,
                             base_url=get_base_url(response))
-    forms = root.xpath('//form')
-    if not forms:
-        raise ValueError(f"No <form> element found in {response}")
 
-    if formname is not None:
-        f = root.xpath(f'//form[@name="{formname}"]')
-        if f:
-            return f[0]
+    forms = _get_forms_if_exist(root, response)
 
-    if formid is not None:
-        f = root.xpath(f'//form[@id="{formid}"]')
-        if f:
-            return f[0]
+    f = _get_form_from_id_or_name(root, formname, formid)
+    if f is not None:
+        return f
 
     # Get form element from xpath, if not found, go up
     if formxpath is not None:
         nodes = root.xpath(formxpath)
         if nodes:
             el = nodes[0]
-            while True:
+            while el is not None:
                 if el.tag == 'form':
                     return el
                 el = el.getparent()
-                if el is None:
-                    break
         raise ValueError(f'No <form> element found with {formxpath}')
 
     # If we get here, it means that either formname was None
