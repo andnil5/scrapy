@@ -8,7 +8,7 @@ from urllib.parse import parse_qs, unquote_to_bytes, urlparse
 
 from scrapy.http import Request, FormRequest, XmlRpcRequest, JsonRequest, Headers, HtmlResponse
 # GROUP 12 ADDED IMPORT
-from scrapy.http.request.form import _get_inputs
+from scrapy.http.request.form import _get_inputs, _get_form
 from scrapy.utils.python import to_bytes, to_unicode
 
 
@@ -17,6 +17,22 @@ class DatatypeTest(unittest.TestCase):
     def test_formdata_type(self):
         # GROUP 12 ADDED TEST CASE
         self.assertRaises(ValueError, _get_inputs, "", 5, "", "", "")
+
+
+class FormTest(unittest.TestCase):
+    
+    def test_get_form(self):
+        # GROUP 12 ADDED TEST CASE
+        response = _buildresponse(
+            b"""<form action="post.php" method="POST">
+            <input type="hidden" name="test" value="val1">
+            </form>""",
+            url="http://www.example.com/index.html")
+        formname = "a"
+        formid = 1
+        formnumber = 2
+        formxpath = '//form/..'
+        self.assertRaises(ValueError, _get_form, response, formname, formid, formnumber, formxpath)
 
 
 class RequestTest(unittest.TestCase):
