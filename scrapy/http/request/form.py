@@ -169,6 +169,18 @@ def _select_value(ele, n, v):
         v = [(o.get('value') or o.text or '').strip() for o in selected_options]
     return n, v
 
+def _util_check_el(el, clickdata):
+    """
+    GROUP 12 ADDED FUNCTION
+    * Reducing CNN of _get_clickable by 1
+    """
+    if len(el) == 1:
+        return (el[0].get('name'), el[0].get('value') or '')
+    elif len(el) > 1:
+        raise ValueError(f"Multiple elements found ({el!r}) matching the "
+                         f"criteria in clickdata: {clickdata!r}")
+    else:
+        raise ValueError(f'No clickable element matching clickdata: {clickdata!r}') 
 
 def _get_clickable(clickdata, form):
     """
@@ -192,7 +204,7 @@ def _get_clickable(clickdata, form):
     # If clickdata is given, we compare it to the clickable elements to find a
     # match. We first look to see if the number is specified in clickdata,
     # because that uniquely identifies the element
-    nr = clickdata.get('nr', None)
+    nr = clickdata.get('nr', None)  
     if nr is not None:
         try:
             el = list(form.inputs)[nr]
@@ -205,10 +217,15 @@ def _get_clickable(clickdata, form):
     # arguments, because they can be used as such
     xpath = './/*' + ''.join(f'[@{k}="{v}"]' for k, v in clickdata.items())
     el = form.xpath(xpath)
-    if len(el) == 1:
+
+    # GROUP 12 ADDED REFACTORING
+    return _util_check_el(el, clickdata)
+    
+    # GROUP 12 REMOVED CODE
+    """ if len(el) == 1:
         return (el[0].get('name'), el[0].get('value') or '')
-    elif len(el) > 1:
-        raise ValueError(f"Multiple elements found ({el!r}) matching the "
-                         f"criteria in clickdata: {clickdata!r}")
-    else:
-        raise ValueError(f'No clickable element matching clickdata: {clickdata!r}')
+        elif len(el) > 1:
+            raise ValueError(f"Multiple elements found ({el!r}) matching the "
+                            f"criteria in clickdata: {clickdata!r}")
+        else:
+            raise ValueError(f'No clickable element matching clickdata: {clickdata!r}') """
