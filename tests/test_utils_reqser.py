@@ -2,7 +2,7 @@ import unittest
 
 from scrapy.http import Request, FormRequest
 from scrapy.spiders import Spider
-from scrapy.utils.reqser import request_to_dict, request_from_dict
+from scrapy.utils.reqser import request_to_dict, request_from_dict, _get_method
 
 
 class RequestSerializationTest(unittest.TestCase):
@@ -131,6 +131,10 @@ class RequestSerializationTest(unittest.TestCase):
         r = Request("http://www.example.com", callback=spider.parse)
         setattr(spider, 'parse', None)
         self.assertRaises(ValueError, request_to_dict, r, spider=spider)
+
+    def test_func_name(self):
+        # GROUP 12 ADDED TEST CASE
+        self.assertRaises(ValueError, _get_method, self.spider, "")
 
 
 class TestSpiderMixin:
