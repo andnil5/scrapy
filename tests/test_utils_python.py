@@ -105,6 +105,7 @@ class BinaryIsTextTest(unittest.TestCase):
         assert not binary_is_text(b"\x02\xa3")
 
     def test_string_contain_nonprintable(self):
+        # GROUP 12 ADDED TEST CASE
         self.assertRaises(TypeError, binary_is_text, "hello\nworld")
 
 
