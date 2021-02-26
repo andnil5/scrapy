@@ -18,7 +18,7 @@ from scrapy.utils.response import get_base_url
 
 coverage_get_form = [False]*24
 coverage_get_inputs = [False]*26
-coverage_get_clickable = [False]*19
+coverage_get_clickable = [False]*18
 
 class FormRequest(Request):
     valid_form_methods = ['GET', 'POST']
@@ -338,11 +338,9 @@ def _get_clickable(clickdata, form):
 
         return (el[0].get('name'), el[0].get('value') or '')
     elif len(el) > 1:
-        coverage_get_clickable[16] = True  # "false branch" of if
-        coverage_get_clickable[17] = True  # "true branch" of elif
+        coverage_get_clickable[16] = True
         raise ValueError(f"Multiple elements found ({el!r}) matching the "
                          f"criteria in clickdata: {clickdata!r}")
     else:
-        coverage_get_clickable[16] = True  # "false branch" of if
-        coverage_get_clickable[18] = True  # "false branch" of elif
+        coverage_get_clickable[17] = True  # "false branch" of if
         raise ValueError(f'No clickable element matching clickdata: {clickdata!r}')
