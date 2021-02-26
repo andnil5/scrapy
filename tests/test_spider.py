@@ -579,6 +579,18 @@ Sitemap: /sitemap-relative-url.xml
         self.assertEqual([req.url for req in spider._parse_sitemap(r)],
                          ['http://www.example.com/sitemap2.xml'])
 
+    def test_parse_sitemap(self):
+	# GROUP 12 ADDED TEST CASE
+    	sitemap = b"""<?xml version="1.0" encoding="UTF-8"?>
+    	<sitemap>
+    		<loc>http://www.example.com/sitemap1.xml</loc>
+    		<lastmod>2004-01-01T20:00:00+00:00</lastmod>
+    	</sitemap>"""
+    	r = TextResponse(url="http://www.example.com/sitemap.xml", body=sitemap)
+    	spider = self.spider_class("example.com")
+    	it = spider._parse_sitemap(r)
+    	# assert that `it` is empty
+    	self.assertRaises(StopIteration, next, it)
 
 class SitemapSpiderHelperTest(unittest.TestCase):
 
