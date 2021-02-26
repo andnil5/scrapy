@@ -42,11 +42,8 @@ class ResponseUtilsTest(unittest.TestCase):
         resp = Response(url, body=body)
         self.assertRaises(TypeError, open_in_browser, resp, debug=True)
 
-
-    # GROUP 12 ADDED TEST CASE
     def test_open_in_browser_custom(self):
-        url = "http:///www.example.com/some/page.html"
-        body = b"dummy dummy"
+        # GROUP 12 ADDED TEST CASE
 
         def browser_open(burl):
             path = urlparse(burl).path
@@ -54,11 +51,29 @@ class ResponseUtilsTest(unittest.TestCase):
                 path = burl.replace('file://', '')
             with open(path, "rb") as f:
                 bbody = f.read()
-                self.assertEqual(bbody, b"dummy dummy")
+                self.assertEqual(bbody, b'dummy_response')
             return True
-        response = TextResponse(url, body=body)
-        assert open_in_browser(response, _openfunc=browser_open), "Browser not called"
-        
+        open_in_browser(self.dummy_response, _openfunc=browser_open)
+
+    def test_open_in_browser_custom_2(self):
+        # GROUP 12 ADDED TEST CASE
+        body = b"<html> <head><base href='http:///www.example.com/'></head></html>"
+
+        def browser_open(burl):
+            path = urlparse(burl).path
+            if not os.path.exists(path):
+                path = burl.replace('file://', '')
+            with open(path, "rb") as f:
+                bbody = f.read()
+            self.assertEqual(body, bbody)
+            return True
+        response = HtmlResponse("http:///www.example.com/", body=body)
+        open_in_browser(response, _openfunc=browser_open)
+
+    def test_open_in_browser_custom_3(self):
+        # GROUP 12 ADDED TEST CASE
+        response = Response("http:///www.example.com/")
+        self.assertRaises(TypeError, open_in_browser, response)
 
     def test_get_meta_refresh(self):
         r1 = HtmlResponse("http://www.example.com", body=b"""
