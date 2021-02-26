@@ -2,7 +2,7 @@ import unittest
 
 from scrapy.http import Request, FormRequest
 from scrapy.spiders import Spider
-from scrapy.utils.reqser import request_to_dict, request_from_dict, _get_method
+from scrapy.utils.reqser import request_to_dict, request_from_dict, _get_method # GROUP 12 ADDED IMPORT
 
 
 class RequestSerializationTest(unittest.TestCase):
