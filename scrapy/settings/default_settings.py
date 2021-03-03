@@ -101,6 +101,7 @@ DOWNLOADER_MIDDLEWARES_BASE = {
     'scrapy.downloadermiddlewares.defaultheaders.DefaultHeadersMiddleware': 400,
     'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': 500,
     'scrapy.downloadermiddlewares.retry.RetryMiddleware': 550,
+    'scrapy.downloadermiddlewares.httpequivencoding.HttpEquivEncodingMiddleware': 555,
     'scrapy.downloadermiddlewares.ajaxcrawl.AjaxCrawlMiddleware': 560,
     'scrapy.downloadermiddlewares.redirect.MetaRefreshMiddleware': 580,
     'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware': 590,
@@ -187,6 +188,8 @@ HTTPCACHE_IGNORE_RESPONSE_CACHE_CONTROLS = []
 HTTPCACHE_DBM_MODULE = 'dbm'
 HTTPCACHE_POLICY = 'scrapy.extensions.httpcache.DummyPolicy'
 HTTPCACHE_GZIP = False
+
+HTTPEQUIVENCODING_ENABLED = False
 
 HTTPPROXY_ENABLED = True
 HTTPPROXY_AUTH_ENCODING = 'latin-1'
