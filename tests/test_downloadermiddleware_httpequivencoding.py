@@ -41,7 +41,7 @@ class HttpEquivEncodingMiddlewareTest(unittest.TestCase):
         return req, res
 
     def test_obey_body_encoding(self):
-        """Test that `process_response` obey body encoding if header 
+        """Test that `process_response` obey body encoding if header
            and body disagree.
         """
         mw, spider = self._get_mw_spider()
@@ -80,7 +80,7 @@ class HttpEquivEncodingMiddlewareTest(unittest.TestCase):
 
     def test_no_body_encoding(self):
         """Test that `process_response` does not modify the response
-           if the body does not contain a charset declaration. 
+           if the body does not contain a charset declaration.
         """
         mw, spider = self._get_mw_spider()
         req, res = self._req_res(res_kwargs={
