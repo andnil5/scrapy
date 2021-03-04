@@ -1,5 +1,5 @@
 from scrapy.exceptions import NotConfigured
-
+from scrapy.http import TextResponse
 
 class HttpEquivEncodingMiddleware:
     """
@@ -14,5 +14,12 @@ class HttpEquivEncodingMiddleware:
         return cls()
 
     def process_response(self, request, response, spider):
-        print("----- PROCESSING RESPONSE!!! -----\n")
+
+        if isinstance(response, TextResponse) \
+            and response._encoding is None \
+            and response._headers_encoding is not None \
+            and response._body_declared_encoding() is not None \
+            and response._headers_encoding() != response._body_declared_encoding():
+            return response.replace(encoding=response._body_declared_encoding())
+            
         return response
