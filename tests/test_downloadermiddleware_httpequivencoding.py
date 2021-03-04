@@ -8,6 +8,16 @@ from scrapy.exceptions import NotConfigured
 
 class HttpEquivEncodingMiddlewareTest(unittest.TestCase):
 
+    def _get_meta_tag_body(self, charset):
+        body = """
+            <html><head>
+                <meta http-equiv="Content-Type" content="text/html; charset={}" />
+            </head></html>""".format(charset)
+        return body.encode(charset)
+
+    def _get_header(self, charset):
+        return {"Content-type": ["text/html; charset={}".format(charset)]}
+
     def _get_mw_spider(self):
         crawler = get_crawler(settings_dict={'HTTPEQUIVENCODING_ENABLED': True})
         spider = crawler._create_spider('foo')
@@ -22,21 +32,19 @@ class HttpEquivEncodingMiddlewareTest(unittest.TestCase):
 
     def test_obey_body_encoding(self):
         mw, spider = self._get_mw_spider()
-        data = b'<html>  <head>  <meta http-equiv="Content-Type" content="text/html; charset=windows-1252" /> </head> </html>'
         req, res = self._req_res(res_kwargs={
-            "body": data,
-            "headers": {"Content-type": ["text/html; charset=utf-8"]}
+            "body": self._get_meta_tag_body("windows-1252"),
+            "headers": self._get_header("utf-8")
         })
         res2 = mw.process_response(req, res, spider)
         self.assertEqual(res2.encoding, "cp1252")
 
     def test_prioritise_encoding_argument(self):
         mw, spider = self._get_mw_spider()
-        data = b'<html>  <head>  <meta http-equiv="Content-Type" content="text/html; charset=windows-1252" /> </head> </html>'
         req, res = self._req_res(res_kwargs={
             "encoding": "utf-16",
-            "body": data,
-            "headers": {"Content-type": ["text/html; charset=utf-8"]}
+            "body": self._get_meta_tag_body("windows-1252"),
+            "headers": self._get_header("utf-8")
         })
         res2 = mw.process_response(req, res, spider)
         self.assertEqual(res2.encoding, "utf-16")
@@ -44,9 +52,8 @@ class HttpEquivEncodingMiddlewareTest(unittest.TestCase):
 
     def test_no_headers_encoding(self):
         mw, spider = self._get_mw_spider()
-        data = b'<html>  <head>  <meta http-equiv="Content-Type" content="text/html; charset=windows-1252" /> </head> </html>'
         req, res = self._req_res(res_kwargs={
-            "body": data,
+            "body": self._get_meta_tag_body("windows-1252"),
         })
         res2 = mw.process_response(req, res, spider)
         self.assertEqual(res2.encoding, "cp1252")
@@ -54,10 +61,9 @@ class HttpEquivEncodingMiddlewareTest(unittest.TestCase):
 
     def test_no_body_encoding(self):
         mw, spider = self._get_mw_spider()
-        data = b'<html> <head></head> </html>'
         req, res = self._req_res(res_kwargs={
-            "body": data,
-            "headers": {"Content-type": ["text/html; charset=utf-8"]}
+            "body": b'<html> <head></head> </html>',
+            "headers": self._get_header("utf-8")
         })
         res2 = mw.process_response(req, res, spider)
         self.assertEqual(res2.encoding, "utf-8")
@@ -65,10 +71,9 @@ class HttpEquivEncodingMiddlewareTest(unittest.TestCase):
 
     def test_same_encoding(self):
         mw, spider = self._get_mw_spider()
-        data = b'<html>  <head>  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> </head> </html>'
         req, res = self._req_res(res_kwargs={
-            "body": data,
-            "headers": {"Content-type": ["text/html; charset=utf-8"]}
+            "body": self._get_meta_tag_body("utf-8"),
+            "headers": self._get_header("utf-8")
         })
         res2 = mw.process_response(req, res, spider)
         self.assertEqual(res2.encoding, "utf-8")
