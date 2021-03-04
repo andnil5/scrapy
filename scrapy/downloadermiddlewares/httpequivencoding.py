@@ -1,6 +1,5 @@
 from scrapy.exceptions import NotConfigured
-from scrapy.http import HtmlResponse
-import re
+from scrapy.http import TextResponse
 
 class HttpEquivEncodingMiddleware:
     """
@@ -15,21 +14,12 @@ class HttpEquivEncodingMiddleware:
         return cls()
 
     def process_response(self, request, response, spider):
-        
-        if not isinstance(response, HtmlResponse):
-            return response
 
-        # Filter HTML comments and spaces
-        body = re.sub(b'\s+|<\!--.*?-->', b'', response.body, re.DOTALL)
-
-        # Extract the meta http-equiv='Content-Type' tag from the body if exists
-        meta_tag = b'<metahttp-equiv=[\"\']Content-Type[\"\'].*charset[^>)]*?/>'
-        meta_charset_tag = re.search(meta_tag, body, re.IGNORECASE)
-        if meta_charset_tag:
-            # Extract charset key, value pair.
-            charset_mapping = re.search(b'charset=[^;\"\']+', meta_charset_tag[0], re.IGNORECASE)
-            if charset_mapping:
-                # Extract charset value and update response encoding
-                response._encoding = charset_mapping[0][8:].decode()
-
+        if isinstance(response, TextResponse) \
+            and response._encoding is None \
+            and response._headers_encoding is not None \
+            and response._body_declared_encoding() is not None \
+            and response._headers_encoding() != response._body_declared_encoding():
+            return response.replace(encoding=response._body_declared_encoding())
+            
         return response
