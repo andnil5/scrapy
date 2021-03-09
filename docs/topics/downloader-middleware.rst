@@ -711,6 +711,31 @@ Default: ``True``
 Whether the Compression middleware will be enabled.
 
 
+HttpEquivEncodingMiddleware
+-------------------------
+
+.. module:: scrapy.downloadermiddlewares.httpequivencoding
+   :synopsis: Http Equiv Encoding Middleware
+
+.. class:: HttpEquivEncodingMiddleware
+
+   This middleware allows body encoding defined in a Text Response
+   to be prioritized over the defined header encoding.
+
+
+HttpEquivEncodingMiddleware Settings
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. setting:: HTTPEQUIVENCODING_ENABLED
+
+HTTPEQUIVENCODING_ENABLED
+^^^^^^^^^^^^^^^^^^^
+
+Default: ``False``
+
+Whether the Http equiv encoding middleware will be enabled.
+
+
 HttpProxyMiddleware
 -------------------
 
